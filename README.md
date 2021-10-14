@@ -13,6 +13,7 @@ Sistema de Backup com notificações pelo Discord feito especificamente para faz
 
 A aplicação necessita de algumas configurações suas para iniciar.  
 Para isso, vá para o diretório `config` e procure pelo arquivo `config.json` e preencha ele como quiser.
+Se tiver dúvidas em como preencher o arquivo, dê uma olhada [AQUI](https://github.com/zLupa/TS-Backup/blob/main/src/config/config.md)
 
 ## 🚀 Iniciar
 
