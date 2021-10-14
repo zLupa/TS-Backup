@@ -13,7 +13,7 @@ export class DiscordService {
     embed
       .setTitle("💾 Backup iniciado!")
       .setDescription(`O Backup foi iniciado de todos os servidores e o MySQL.`)
-      .setFooter("Heroes Backup")
+      .setFooter("TS-Backup")
       .setTimestamp()
       .setColor("YELLOW");
 
@@ -29,7 +29,7 @@ export class DiscordService {
         **Obs.: O Backup do resto dos servidores ainda continuará mesmo com esse erro.**
         `
       )
-      .setFooter("Heroes Backup")
+      .setFooter("TS-Backup")
       .setTimestamp()
       .setColor("RED");
 
@@ -44,7 +44,7 @@ export class DiscordService {
     embed
       .setTitle("✅ Backup finalizado!")
       .setDescription("Yay! O Backup foi finalizado com sucesso")
-      .setFooter("Heroes Backup")
+      .setFooter("TS-Backup")
       .setTimestamp()
       .setColor("GREEN");
 
