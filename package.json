@@ -1,17 +1,26 @@
 {
-  "name": "ts-backup",
-  "version": "1.0.0",
-  "main": "index.js",
+  "name": "bckup",
+  "version": "1.0.3",
   "license": "MIT",
+  "main": "./dist/cli/index.js",
+  "bin": {
+    "init": "./dist/cli/index.js"
+  },
   "scripts": {
     "build": "tsc",
     "start": "node dist/RunBackup.js",
     "dev": "ts-node-dev --respawn --transpile-only --ignore-watch node_modules/ src/RunBackup.ts",
     "cli": "ts-node-dev --respawn --transpile-only --ignore-watch node_modules/ src/cli/index.ts"
   },
+  "files": [
+    "dist",
+    "README.md",
+    "package.json"
+  ],
   "dependencies": {
     "@googleapis/drive": "^2.3.0",
     "chalk": "4.1.2",
+    "commander": "^9.1.0",
     "dayjs": "^1.10.7",
     "discord.js": "^13.1.0",
     "fastq": "^1.13.0",

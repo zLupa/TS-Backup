@@ -1,4 +1,5 @@
-import { readFileSync } from "fs";
+import chalk from "chalk";
+import { mkdirSync, readFileSync, writeFileSync } from "fs";
 import { homedir } from "os";
 
 interface IBackupFolder {
@@ -22,4 +23,24 @@ export function getConfig(): IConfig {
   );
 
   return JSON.parse(configFile);
+}
+
+export function saveConfig(
+  config: IConfig,
+  outputMessage: boolean = true
+): IConfig {
+  try {
+    mkdirSync(`${homedir()}/.ts-backup/`, { recursive: true });
+    writeFileSync(
+      `${homedir()}/.ts-backup/config.json`,
+      JSON.stringify(config)
+    );
+    if (outputMessage) {
+      console.log(chalk.greenBright("✔ Configuration saved!"));
+    }
+  } catch (error) {
+    console.log(chalk.redBright("✘ Failed to create config file!\n", error));
+  }
+
+  return config;
 }
