@@ -1,7 +1,7 @@
 import fastq, { queueAsPromised } from "fastq";
 import { worker } from "./worker";
 
-export type ServerTask = {
+export type FolderTask = {
   name: string;
   srcPath: string;
   dstPath: string;
@@ -9,7 +9,7 @@ export type ServerTask = {
 
 const CONCURRENCY = 1;
 
-export const queue: queueAsPromised<ServerTask> = fastq.promise(
+export const queue: queueAsPromised<FolderTask> = fastq.promise(
   worker,
   CONCURRENCY
 );

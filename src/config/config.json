@@ -1,9 +1,0 @@
-{
-  "backupPath": "/backups",
-  "servers": [
-    {
-      "name": "BungeeCord",
-      "path": "/var/lib/pterodactyl/servers/_YOUR_SERVER_UUID_"
-    }
-  ]
-}

@@ -1,18 +1,21 @@
 // Sim, eu sei que instalar Discord.JS só pra isso é meio overkill, mas enfim dps eu faço minha implementação com Axios.
 import { MessageEmbed, WebhookClient } from "discord.js";
+import { getConfig } from "../config/config";
 
 export class DiscordService {
   private client: WebhookClient;
 
   constructor() {
-    this.client = new WebhookClient({ url: process.env.DISCORD_WEBHOOK_URL });
+    const { discordWebhookUrl } = getConfig();
+
+    this.client = new WebhookClient({ url: discordWebhookUrl });
   }
 
   async sendStartBackupMessage() {
     const embed = new MessageEmbed();
     embed
       .setTitle("💾 Backup iniciado!")
-      .setDescription(`O Backup foi iniciado de todos os servidores e o MySQL.`)
+      .setDescription(`O Backup foi iniciado de seus arquivos.`)
       .setFooter("TS-Backup")
       .setTimestamp()
       .setColor("YELLOW");

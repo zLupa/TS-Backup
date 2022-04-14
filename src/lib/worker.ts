@@ -1,4 +1,4 @@
-import { ServerTask } from "./queue";
+import { FolderTask } from "./queue";
 import tar from "tar";
 import fs from "fs";
 
@@ -6,7 +6,7 @@ export async function worker({
   name,
   srcPath,
   dstPath,
-}: ServerTask): Promise<void> {
+}: FolderTask): Promise<void> {
   console.log(`Starting backup on ${srcPath}. Saving backup to ${dstPath}`);
 
   const tarBall = tar.c(

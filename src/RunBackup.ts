@@ -1,29 +1,28 @@
-require("dotenv/config");
-
 import { queue } from "./lib/queue";
-import fs from "fs";
 import dayjs from "dayjs";
-import config from "./config/config.json";
-import { mysqlBackup } from "./lib/mysqlBackup";
+//import { mysqlBackup } from "./lib/mysqlBackup";
 import { DiscordService } from "./services/DiscordService";
-
-const BACKUP_PATH = config.backupPath;
+import { getConfig } from "./config/config";
+import { mkdir } from "fs/promises";
 
 async function RunBackup() {
+  const { local, folders } = getConfig();
+
   const currentTime = dayjs().format("DD-MM-YYYY-HH:mm:ss");
   const discordService = new DiscordService();
 
-  fs.mkdirSync(`${BACKUP_PATH}/${currentTime}`, { recursive: true });
+  await mkdir(`${local?.saveTo}/${currentTime}`, { recursive: true });
 
   await discordService.sendStartBackupMessage();
 
-  try {
+  // I will work on this later
+  /*try {
     console.log("Starting MySQL Backup...");
-    mysqlBackup(`${BACKUP_PATH}/${currentTime}`);
-    console.log("MySQL Backup finished, starting to backup the servers.");
+    mysqlBackup(`${local?.saveTo}/${currentTime}`);
+    console.log("MySQL Backup finished, starting to backup the other folders.");
   } catch (err) {
     await discordService.sendBackupErrorMessage("MySQL", err);
-  }
+  }*/
 
   queue.error(async (err, task) => {
     if (err) {
@@ -31,11 +30,11 @@ async function RunBackup() {
     }
   });
 
-  for (const server of config.servers) {
+  for (const folder of folders) {
     await queue.push({
-      name: server.name,
-      srcPath: server.path,
-      dstPath: `${BACKUP_PATH}/${currentTime}`,
+      name: folder.name,
+      srcPath: folder.path,
+      dstPath: `${local?.saveTo}/${currentTime}`,
     });
   }
 
