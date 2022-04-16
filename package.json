@@ -1,14 +1,13 @@
 {
   "name": "bckup",
-  "version": "1.0.3",
+  "version": "1.1.6",
   "license": "MIT",
-  "main": "./dist/cli/index.js",
+  "main": "./dist/src/cli/index.js",
   "bin": {
-    "init": "./dist/cli/index.js"
+    "bckup": "./dist/src/cli/index.js"
   },
   "scripts": {
     "build": "tsc",
-    "start": "node dist/RunBackup.js",
     "dev": "ts-node-dev --respawn --transpile-only --ignore-watch node_modules/ src/RunBackup.ts",
     "cli": "ts-node-dev --respawn --transpile-only --ignore-watch node_modules/ src/cli/index.ts"
   },

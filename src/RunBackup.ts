@@ -5,7 +5,7 @@ import { DiscordService } from "./services/DiscordService";
 import { getConfig } from "./config/config";
 import { mkdir } from "fs/promises";
 
-async function RunBackup() {
+export async function RunBackup() {
   const { local, folders } = getConfig();
 
   const currentTime = dayjs().format("DD-MM-YYYY-HH:mm:ss");
@@ -41,4 +41,3 @@ async function RunBackup() {
   console.log("Backup finished, have a great day! (:");
   await discordService.sendBackupFinishedMessage();
 }
-RunBackup();

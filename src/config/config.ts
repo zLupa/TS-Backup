@@ -1,5 +1,5 @@
 import chalk from "chalk";
-import { mkdirSync, readFileSync, writeFileSync } from "fs";
+import { existsSync, mkdir, mkdirSync, readFileSync, writeFileSync } from "fs";
 import { homedir } from "os";
 
 interface IBackupFolder {
@@ -16,13 +16,32 @@ export interface IConfig {
   discordWebhookUrl: string;
 }
 
-export function getConfig(): IConfig {
-  const configFile = readFileSync(
-    `${homedir()}/.ts-backup/config.json`,
-    "utf-8"
-  );
+const configLocation = `${homedir()}/.ts-backup/config.json`;
+const configFolder = `${homedir()}/.ts-backup/`;
 
-  return JSON.parse(configFile);
+export function getConfig(): IConfig {
+  if (!existsSync(configLocation)) {
+    console.log(
+      chalk.red(
+        "Config file not found. Make sure you initialized with the init command"
+      )
+    );
+    process.exit(1);
+  }
+
+  try {
+    const configFile = readFileSync(configLocation, "utf-8");
+    const configObject = JSON.parse(configFile);
+
+    return configObject;
+  } catch (error) {
+    console.log(
+      chalk.red(
+        `Failed to parse configuration file at ${configLocation}.\nYou can overwrite it by running the init command.\nError: ${error}`
+      )
+    );
+    process.exit(1);
+  }
 }
 
 export function saveConfig(
@@ -30,16 +49,13 @@ export function saveConfig(
   outputMessage: boolean = true
 ): IConfig {
   try {
-    mkdirSync(`${homedir()}/.ts-backup/`, { recursive: true });
-    writeFileSync(
-      `${homedir()}/.ts-backup/config.json`,
-      JSON.stringify(config)
-    );
+    mkdirSync(configFolder, { recursive: true });
+    writeFileSync(configLocation, JSON.stringify(config, null, 2));
     if (outputMessage) {
       console.log(chalk.greenBright("✔ Configuration saved!"));
     }
   } catch (error) {
-    console.log(chalk.redBright("✘ Failed to create config file!\n", error));
+    console.log(chalk.red("Failed to save configuration file to disk!", error));
   }
 
   return config;
