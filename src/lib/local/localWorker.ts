@@ -1,8 +1,8 @@
-import { FolderTask } from "./queue";
+import { FolderTask } from "./localQueue";
 import tar from "tar";
 import fs from "fs";
 
-export async function worker({
+export async function localWorker({
   name,
   srcPath,
   dstPath,

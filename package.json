@@ -1,6 +1,6 @@
 {
   "name": "bckup",
-  "version": "1.1.6",
+  "version": "1.1.7",
   "license": "MIT",
   "main": "./dist/src/cli/index.js",
   "bin": {

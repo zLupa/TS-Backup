@@ -1,5 +1,5 @@
 import chalk from "chalk";
-import { existsSync, mkdir, mkdirSync, readFileSync, writeFileSync } from "fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
 import { homedir } from "os";
 
 interface IBackupFolder {
@@ -8,9 +8,13 @@ interface IBackupFolder {
 }
 
 export interface IConfig {
-  type: "local";
+  type: "local" | "drive";
   local?: {
     saveTo: string;
+  };
+  drive?: {
+    serviceAccountFilePath: string;
+    folderId?: string;
   };
   folders: IBackupFolder[];
   discordWebhookUrl: string;

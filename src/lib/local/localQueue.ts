@@ -1,5 +1,5 @@
 import fastq, { queueAsPromised } from "fastq";
-import { worker } from "./worker";
+import { localWorker } from "./localWorker";
 
 export type FolderTask = {
   name: string;
@@ -9,7 +9,7 @@ export type FolderTask = {
 
 const CONCURRENCY = 1;
 
-export const queue: queueAsPromised<FolderTask> = fastq.promise(
-  worker,
+export const localQueue: queueAsPromised<FolderTask> = fastq.promise(
+  localWorker,
   CONCURRENCY
 );

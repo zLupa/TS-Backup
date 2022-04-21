@@ -1,10 +1,18 @@
+import prompts from "prompts";
 import { constants } from "fs";
 import { access } from "fs/promises";
-import prompts from "prompts";
-import { saveConfig } from "../config/config";
+import { IConfig, saveConfig } from "../config/config";
+import { googleDrivePrompt } from "./prompts/googleDrivePrompt";
+import { localPrompt } from "./prompts/localPrompt";
 import { exitOnCancel as onCancel } from "./utils/exitOnCancel";
 
 export async function runInit() {
+  let initConfig: IConfig = {
+    type: "local",
+    folders: [],
+    discordWebhookUrl: "",
+  };
+
   const { storageType } = await prompts(
     {
       name: "storageType",
@@ -25,23 +33,18 @@ export async function runInit() {
     { onCancel }
   );
 
-  const { saveTo } = await prompts(
-    {
-      name: "saveTo",
-      message: "Where do you want to save the backups? (full path)",
-      min: 1,
-      type: storageType === "local" ? "text" : null,
-      validate: async input => {
-        try {
-          await access(input, constants.R_OK);
-          return true;
-        } catch (error) {
-          return "I don't have permission to view this folder or it doesn't exists!";
-        }
-      },
-    },
-    { onCancel }
-  );
+  switch (storageType) {
+    case "local":
+      const { saveTo } = await localPrompt();
+      initConfig.local = { saveTo };
+      initConfig.type = "local";
+      break;
+    case "drive":
+      const { folderId, serviceAccountFilePath } = await googleDrivePrompt();
+      initConfig.drive = { serviceAccountFilePath, folderId };
+      initConfig.type = "drive";
+      break;
+  }
 
   const { name } = await prompts(
     {
@@ -82,16 +85,13 @@ export async function runInit() {
   );
 
   saveConfig({
-    type: storageType,
-    local: {
-      saveTo,
-    },
+    ...initConfig,
+    discordWebhookUrl,
     folders: [
       {
         name,
         path,
       },
     ],
-    discordWebhookUrl,
   });
 }
