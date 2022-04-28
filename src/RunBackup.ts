@@ -39,7 +39,7 @@ export async function RunBackup() {
       case "drive":
         setErrorReport(driveQueue);
         await driveQueue.push({
-          name: folder.name,
+          name: `${folder.name}-${currentTime}`,
           srcPath: folder.path,
         });
         break;
