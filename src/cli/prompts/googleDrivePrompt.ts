@@ -1,32 +1,41 @@
-import { constants } from "fs";
-import { access } from "fs/promises";
 import prompts from "prompts";
 import {
   getGoogleDriveClient,
+  getGoogleOAuthClient,
   listGoogleDriveFiles,
 } from "../../lib/drive/googleDriveWorker";
+import { CodeChallengeMethod } from "google-auth-library";
 import { exitOnCancel as onCancel } from "../utils/exitOnCancel";
 
 export async function googleDrivePrompt() {
-  const { serviceAccountFilePath } = await prompts(
+  const oauthClient = getGoogleOAuthClient(false);
+
+  const { codeVerifier, codeChallenge } =
+    await oauthClient.generateCodeVerifierAsync();
+
+  const authURL = oauthClient.generateAuthUrl({
+    access_type: "offline",
+    code_challenge: codeChallenge,
+    code_challenge_method: CodeChallengeMethod.S256,
+    scope: ["https://www.googleapis.com/auth/drive"],
+  });
+
+  const { code } = await prompts(
     {
-      name: "serviceAccountFilePath",
-      message: "Where's your service account file?",
+      name: "code",
       min: 1,
+      message: `Open this URL in your favorite browser and paste the code here \n${authURL}\n`,
       type: "text",
-      validate: async input => {
-        try {
-          await access(input, constants.R_OK);
-          return true;
-        } catch (error) {
-          return "I don't have permission to view this file or it doesn't exists!";
-        }
-      },
     },
     { onCancel }
   );
 
-  const client = getGoogleDriveClient(serviceAccountFilePath);
+  const { tokens: credentials } = await oauthClient.getToken({
+    code,
+    codeVerifier,
+  });
+
+  const client = getGoogleDriveClient(credentials);
   const folders = await listGoogleDriveFiles("only-folders", client);
 
   const { folderId } = await prompts({
@@ -42,5 +51,5 @@ export async function googleDrivePrompt() {
     ],
   });
 
-  return { serviceAccountFilePath, folderId };
+  return { credentials, folderId };
 }

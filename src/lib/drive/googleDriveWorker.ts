@@ -1,7 +1,9 @@
 import { auth, drive, drive_v3 } from "@googleapis/drive";
+import { Credentials } from "google-auth-library";
 import { Readable, PassThrough } from "stream";
 import tar from "tar";
-import { getConfig } from "../../config/config";
+import { getConfig, saveConfig } from "../../config/config";
+import googleOAuthConfig from "../../config/googleOAuthConfig";
 import { DriveTask } from "./googleDriveQueue";
 
 interface IUploadFile {
@@ -11,17 +13,38 @@ interface IUploadFile {
   client?: drive_v3.Drive;
 }
 
-export function getGoogleDriveClient(serviceAccountFilePath?: string) {
-  if (!serviceAccountFilePath) {
-    serviceAccountFilePath = getConfig().drive?.serviceAccountFilePath;
+export function getGoogleOAuthClient(autoRefreshAccessToken: boolean = true) {
+  const oauthClient = new auth.OAuth2(
+    googleOAuthConfig.client_id,
+    googleOAuthConfig.client_secret,
+    googleOAuthConfig.redirect_uri
+  );
+
+  if (autoRefreshAccessToken) {
+    oauthClient.on("tokens", credentials => {
+      const config = getConfig();
+
+      if (!config.drive) return;
+
+      config.drive.credentials = credentials;
+
+      saveConfig(config);
+    });
   }
 
-  const authClient = new auth.GoogleAuth({
-    keyFile: serviceAccountFilePath,
-    scopes: ["https://www.googleapis.com/auth/drive"],
-  });
+  return oauthClient;
+}
 
-  return drive({ version: "v3", auth: authClient });
+export function getGoogleDriveClient(credentials?: Credentials) {
+  if (!credentials) {
+    credentials = getConfig().drive?.credentials || {};
+  }
+
+  const oauthClient = getGoogleOAuthClient();
+
+  oauthClient.setCredentials(credentials);
+
+  return drive({ version: "v3", auth: oauthClient });
 }
 
 export async function uploadGoogleDriveFile({

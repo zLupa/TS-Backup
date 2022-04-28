@@ -40,8 +40,8 @@ export async function runInit() {
       initConfig.type = "local";
       break;
     case "drive":
-      const { folderId, serviceAccountFilePath } = await googleDrivePrompt();
-      initConfig.drive = { serviceAccountFilePath, folderId };
+      const { folderId, credentials } = await googleDrivePrompt();
+      initConfig.drive = { credentials, folderId };
       initConfig.type = "drive";
       break;
   }

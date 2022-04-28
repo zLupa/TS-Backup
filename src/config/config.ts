@@ -1,5 +1,6 @@
 import chalk from "chalk";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
+import { Credentials } from "google-auth-library";
 import { homedir } from "os";
 
 interface IBackupFolder {
@@ -13,7 +14,7 @@ export interface IConfig {
     saveTo: string;
   };
   drive?: {
-    serviceAccountFilePath: string;
+    credentials: Credentials;
     folderId?: string;
   };
   folders: IBackupFolder[];
