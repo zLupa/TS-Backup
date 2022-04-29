@@ -6,6 +6,7 @@ import { getConfig } from "./config/config";
 import { mkdir } from "fs/promises";
 import { driveQueue } from "./lib/drive/googleDriveQueue";
 import { queueAsPromised } from "fastq";
+import chalk from "chalk";
 
 const discordService = new DiscordService();
 
@@ -26,6 +27,9 @@ export async function RunBackup() {
   }*/
 
   for (const folder of folders) {
+    console.log(
+      chalk.green(`Starting backup for ${folder.name}. Storage Type: ${type}`)
+    );
     switch (type) {
       case "local":
         await mkdir(`${local?.saveTo}/${currentTime}`, { recursive: true });
@@ -44,9 +48,10 @@ export async function RunBackup() {
         });
         break;
     }
+    console.log(chalk.green(`Backup with name ${folder.name} finished!`));
   }
 
-  console.log("Backup finished, have a great day! (:");
+  console.log("All folders backup finished, have a great day! (:");
   await discordService.sendBackupFinishedMessage();
 }
 

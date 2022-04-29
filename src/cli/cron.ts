@@ -61,24 +61,11 @@ export async function addCron(fileName: string) {
     { onCancel }
   );
 
-  let runForFoldersWithExpression =
-    runForFolders.length == 1
-      ? `${expression} root ${fileName} run ${runForFolders[0]}`
-      : runForFolders
-          .map(folder => `${expression} root ${fileName} run ${folder}`)
-          .join("\n");
-
-  runForFoldersWithExpression = `\nSHELL=/bin/sh\nPATH=${process.env.PATH}\n\n${runForFoldersWithExpression}`;
+  const cronjob = `\nSHELL=/bin/sh\nPATH=${process.env.PATH}\n\n${expression} root ${fileName} run >> /var/log/ts-backup.log 2>&1`;
 
   console.log(
-    chalk.bold.green(
-      `✔ Great! Now, add this job${
-        runForFolders.length > 1 ? "s" : ""
-      } to your cron:`
-    )
+    chalk.bold.green(`✔ Great! Now, add this job to your cron:\n${cronjob}`)
   );
-
-  console.log(runForFoldersWithExpression);
 
   return;
 }
