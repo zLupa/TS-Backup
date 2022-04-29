@@ -26,7 +26,10 @@ export function getGoogleOAuthClient(autoRefreshAccessToken: boolean = true) {
 
       if (!config.drive) return;
 
-      config.drive.credentials = credentials;
+      config.drive.credentials = {
+        ...credentials,
+        refresh_token: config.drive.credentials.refresh_token,
+      };
 
       saveConfig(config);
     });
